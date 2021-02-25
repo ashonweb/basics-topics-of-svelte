@@ -1,9 +1,18 @@
 <script>
+import { onMount } from "svelte";
+
 
 import InfoObjects from "./Info_Objects.svelte";
 import Nested from "./Nested.svelte";
+import Select from "./Select.svelte";
 let githubRepoInfoPromise;
-
+let value='bhagya';
+ let selectedradio = 1;
+ let selectedcheck = ['a'];
+ let checkboxes = ['b','a','v','e']
+	let yes=false;
+	let a =1;
+	$:wordl = 'sadasd'
 	let name ="bhagya";
 	let count = 0;
 	function handleClick () {
@@ -84,6 +93,18 @@ let githubRepoInfoPromise;
 	function handleevent (e) {
 		alert(e.clientX,'on mouse over' )
 	}
+	$: result=undefined;
+	onMount (async ()=>{
+		await fetch('https://protected-ridge-21819.herokuapp.com/characters')
+		.then(res=>res.json())
+		.then( res=>{
+			console.log(res)
+			result= res;
+		})
+		.catch(err=>{
+			return err
+		})
+	})
 </script>
 
 <style>
@@ -189,8 +210,42 @@ let githubRepoInfoPromise;
 	</p>	
 	{/await}
 	<hr/>
-	<div on:mouseover={handleevent}>
+	<!-- <div on:mouseover={handleevent}>
 		mouce over to listen on the element done by on: directive
 	</div>
-	
+	<hr/> -->
+	<p> input  type text bind:value directive</p>
+	<input type="text"  bind:value={wordl}/>
+	<p>{wordl}</p>
+	<p>Type number and range</p>
+	<input type="number" bind:value={a} min=0 max=12/>
+	<input type=range bind:value={a} min=0 max=12/>
+	<p>Type checkbox</p>
+
+	<input type="checkbox"  bind:checked={yes}/>
+	<button disabled={!yes}>dad</button>
+	<p> multiple inputs relating to the same value, you can use bind:group along with the value attribute. Radio inputs in the same group are mutually exclusive; checkbox inputs in the same group form an array of selected values.</p>
+	<input type=radio bind:group={selectedradio} value={1}/>
+	<input type=radio bind:group={selectedradio} value={2}/>
+	<input type=radio bind:group={selectedradio} value={3}/>
+	{#each checkboxes as checkbox }
+		<label>
+			<input type="checkbox" bind:group={selectedcheck} value={checkbox}/> {checkbox}</label>
+	{/each}
+	<textarea bind:value></textarea>
+	<hr/>
+	<p>Select</p>
+	<Select/>
+	<hr/>
+	<p>Life cycle methods</p>
+	 
+	{#if  Array.isArray(result)}
+	{#each result as {name}}
+	<p>{name}</p>
+{/each}
+{:else}
+<p>Loading</p>
+{/if}
+
+
 </main>
